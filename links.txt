@@ -1,0 +1,15 @@
+https://prepinsta.com/data-structures/infix-to-postfix-conversion/
+https://www.geeksforgeeks.org/convert-infix-expression-to-postfix-expression/
+https://favtutor.com/blogs/infix-to-postfix-conversion
+https://www.includehelp.com/c/infix-to-postfix-conversion-using-stack-with-c-program.aspx
+https://qawithexperts.com/article/c-cpp/infix-to-postfix-conversion-program-in-c-using-stack-with-al/156
+https://www.experts-exchange.com/questions/20567036/Unary-minus-in-a-postfix-expression.html
+https://brilliant.org/wiki/shunting-yard-algorithm/
+https://www.geeksforgeeks.org/expression-evaluation/
+https://en.wikipedia.org/wiki/Shunting_yard_algorithm
+https://en.cppreference.com/w/c/language/operator_precedence
+
+while (!stack.isEmpty() &&
+        (prec(c) < prec(stack.peek()) ||
+        (prec(c) == prec(stack.peek()) &&
+        isLeftToRightAssociative(stack.peek()))))
