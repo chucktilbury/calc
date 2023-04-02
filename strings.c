@@ -60,6 +60,11 @@ int _str_append_format(struct _string_* str, const char* ptr, ...) {
     return retv;
 }
 
+int _str_append_string(struct _string_* str, struct _string_* ptr) {
+
+    return _str_append_str(str, (const char*)ptr->array);
+}
+
 const char* _str_raw(struct _string_* str) {
 
     str->array[str->len] = 0;
@@ -125,9 +130,14 @@ void _str_repl_char(struct _string_* str, int index, int ch) {
     str->array[index] = ch;
 }
 
+// Find a char from the end of the string where the index is taken to be
+// the end. If the index <=0 then ignore the index. If the index > len then
+// return not found.
 int _str_find_rev_char(struct _string_* str, int index, int ch) {
 
-    if(index < 0 || index > str->len)
+    if(index <= 0)
+        index = str->len+1;
+    else if(index > str->len)
         return -1; // not found
 
     unsigned char tmp = str->array[index];
@@ -141,6 +151,7 @@ int _str_find_rev_char(struct _string_* str, int index, int ch) {
     return (int)((unsigned long)i - (unsigned long)str->array);
 }
 
+// chop a string off at the index.
 void _str_truncate(struct _string_* str, int index) {
 
     if(index < 0 || index > str->len)
@@ -150,6 +161,7 @@ void _str_truncate(struct _string_* str, int index) {
     str->len = index;
 }
 
+// insert a formatted sub string at the index and return the length.
 int _str_insert_format(struct _string_* str, int index, const char* ptr, ...) {
 
     va_list(args);

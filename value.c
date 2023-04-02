@@ -62,7 +62,48 @@ static const char* typeToStr(ValueType type) {
         (type == VAL_ABS)? "ABS":
         (type == VAL_UMINUS)? "UMINUS":
         (type == VAL_UPLUS)? "UPLUS":
-        (type == VAL_FLOOR)? "FLOOR": "UNKNOWN";
+        (type == VAL_FLOOR)? "FLOOR":
+        (type == VAL_OPAREN)? "(":
+        (type == VAL_CPAREN)? ")":
+        "UNKNOWN";
+}
+
+bool is_operand(struct _value_* v) {
+
+    return (v->type == VAL_OPERAND);
+}
+
+bool is_operator(struct _value_* v) {
+
+    return !(v->type == VAL_OPERAND);
+}
+
+bool is_func(struct _value_* v) {
+
+    switch(v->type) {
+        case VAL_COS:
+        case VAL_SIN:
+        case VAL_TAN:
+        case VAL_ACOS:
+        case VAL_ASIN:
+        case VAL_ATAN:
+        case VAL_COSH:
+        case VAL_SINH:
+        case VAL_TANH:
+        case VAL_ACOSH:
+        case VAL_ASINH:
+        case VAL_ATANH:
+        case VAL_LOG:
+        case VAL_SQRT:
+        case VAL_CBRT:
+        case VAL_CEIL:
+        case VAL_FLOOR:
+        case VAL_ABS:
+            return true;
+        default:
+            return false;
+    }
+    return false;
 }
 
 void _print_value(struct _value_* val) {
@@ -81,6 +122,8 @@ void _print_value(struct _value_* val) {
         case VAL_MOD:
         case VAL_UMINUS:
         case VAL_UPLUS:
+        case VAL_OPAREN:
+        case VAL_CPAREN:
             printf("operator: %s\n", typeToStr(val->type));
             break;
         case VAL_POW:

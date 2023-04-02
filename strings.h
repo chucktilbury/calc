@@ -7,6 +7,7 @@ typedef void* String;
 #define destroyString(s) _str_destroy(s)
 #define appendStringChar(s, c) _str_append_char((s), (c))
 #define appendStringStr(s, p) _str_append_str((s), (p))
+#define appendStringString(s, p) _str_append_string((s), (p))
 #define appendStringFormat(s, p, ...) _str_append_format((s), (p), ##__VA_ARGS__)
 #define insertStringFormat(s, i, p, ...) _str_insert_format((s), (i), (p), ##__VA_ARGS__)
 #define findStringChar(s, i, c) _str_find_char((s), (i), (c))
@@ -21,6 +22,7 @@ struct _string_* _str_create(const char* str);
 void _str_destroy(struct _string_* str);
 int _str_append_char(struct _string_* str, int ch);
 int _str_append_str(struct _string_* str, const char* ptr);
+int _str_append_string(struct _string_* str, struct _string_* ptr);
 int _str_append_format(struct _string_* str, const char* ptr, ...);
 const char* _str_raw(struct _string_* str);
 void _str_reset(struct _string_* str);

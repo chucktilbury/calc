@@ -14,13 +14,11 @@ typedef enum {
     VAL_MUL,
     VAL_DIV,
     VAL_MOD,
+    VAL_POW,    // the '^' operator
 
     // Right assoc unary operators
     VAL_UMINUS, // sign switch to -
     VAL_UPLUS,  // only sign switch to +
-
-    // Left assoc functions with 2 parameters
-    VAL_POW,    // the '^' operator
 
     // Right assoc unary functions with 1 parameter
     VAL_COS,
@@ -41,6 +39,10 @@ typedef enum {
     VAL_CEIL,
     VAL_FLOOR,
     VAL_ABS,
+
+    // Non-assoc and no precedence.
+    VAL_OPAREN,
+    VAL_CPAREN,
 } ValueType;
 
 typedef void* Value;

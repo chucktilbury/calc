@@ -1,20 +1,28 @@
 
-TARGET	=	syard
-OBJS	=	ptrlst.o memory.o strings.o value.o syard.o
-CARGS	=	-Wall -Wextra -g
+TARGET	=	calc
+OBJS	=	ptrlst.o \
+			memory.o \
+			strings.o \
+			value.o \
+			scan.o \
+			errors.o \
+			fileio.o
+CARGS	=	-Wall -Wextra
+DEBUG	=	-g3
+LIBS	=	-lm -lreadline
 
 %.o:%.c
-	gcc $(CARGS) -c -o $@ $<
+	gcc $(CARGS) $(DEBUG) -c -o $@ $<
 
-$(TARGET): $(OBJS)
-	gcc -o $(TARGET) $(OBJS) -lm
+$(TARGET): $(OBJS) calc.c
+	gcc $(DEBUG) -o $(TARGET) main.c $(OBJS) $(LIBS)
 
 ptrlst.o: ptrlst.c ptrlst.h
 memory.o: memory.c memory.h
 strings.o: strings.c strings.h
 value.o: value.c value.h
-
-syard.o: syard.c
+scan.o: scan.c scan.h
+errors.o: errors.c errors.h
 
 clean:
 	-rm -f $(OBJS) $(TARGET)
