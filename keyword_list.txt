@@ -27,4 +27,6 @@
 {"P", TOK_PRINT},
 {"H", TOK_HELP},
 {"V", TOK_VERBO},
+{"SOLVE", TOK_SOLVE},
+{"S", TOK_SOLVE},
 

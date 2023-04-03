@@ -9,13 +9,11 @@
 
 int main(int argc, char** argv) {
 
-    printf("result: %d\n", strcmp("atanh", "atan"));
-
     openFile(argv[1]);
     Token* tok;
 
     consumeToken();
-    while(!TOKEN_IS_EOF) {
+    while(!TOKEN_IS_EOF && crntToken()->type != TOK_QUIT) {
         while(!TOKEN_IS_EOL) {
             printToken(crntToken());
             consumeToken();

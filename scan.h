@@ -13,7 +13,8 @@ typedef enum {
     TOK_DIV,
     TOK_MOD,
     TOK_POW,    // the '^' operator
-    TOK_EQU,    // the '=' operator
+    TOK_EQU,    // the '=' assign value operator
+    TOK_EXPR,   // the '<' assign expression operator
 
     // Right assoc unary operators
     TOK_UMINUS, // sign switch to -
@@ -53,6 +54,7 @@ typedef enum {
     TOK_VERBO,
     TOK_LOAD,
     TOK_SAVE,
+    TOK_SOLVE,
 
     TOK_ERROR,
 } TokenType;

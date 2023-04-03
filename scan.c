@@ -12,6 +12,7 @@
 static char tok_buf[1024];
 static int bidx = 0;
 static Token* _crnt_;
+static bool unary = true;
 
 static struct _keywords_ {
     const char* name;
@@ -22,9 +23,10 @@ static struct _keywords_ {
 };
 static const int num_keywords = (sizeof(keyword_list)/sizeof(struct _keywords_))-1;
 
+// Simple binary search.
 static int find_keyword(const char* word) {
 
-    int low = 0, high = num_keywords;
+    int low = 0, high = num_keywords-1;
     int mid = (low + high) / 2;
     char buf[64];
 
@@ -51,15 +53,17 @@ static int find_keyword(const char* word) {
 // [a-zA-Z_][a-zA-Z_0-9]*
 static Token* get_string() {
 
-    int ch = getChar();
     while(true) {
-        ch = consumeChar();
-        if((isalpha(ch) || ch == '_' || isdigit(ch)))
+        int ch = getChar();
+        if((isalpha(ch) || ch == '_' || isdigit(ch))) {
             tok_buf[bidx++] = ch;
+            consumeChar();
+        }
         else
             break;
     }
 
+    unary = false;
     int type = find_keyword(tok_buf);
     Token* tok = createToken(type);
     tok->data.str = _dup_str(tok_buf);
@@ -67,20 +71,65 @@ static Token* get_string() {
     return tok;
 }
 
+static void get_num_2() {
+
+    int ch = getChar();
+    if(ch == '-' || ch == '+') {
+        tok_buf[bidx++] = ch;
+        consumeChar();
+    }
+
+    while(true) {
+        ch = getChar();
+        if(isdigit(ch)) {
+            tok_buf[bidx++] = ch;
+            consumeChar();
+        }
+        else
+            break;
+    }
+}
+
+static void get_num_1() {
+
+    while(true) {
+        int ch = getChar();
+        if(isdigit(ch)) {
+            tok_buf[bidx++] = ch;
+            consumeChar();
+        }
+        else if(ch == 'e' || ch == 'E') {
+            tok_buf[bidx++] = ch;
+            consumeChar();
+            get_num_2();
+            break;
+        }
+        else
+            break;
+    }
+}
+
 // [0-9]*((\.[0-9]+)+([eE][-+]*[0-9]+)*)
 static Token* get_number() {
 
-    Token* tok = createToken(TOK_NUM);
-
-    int ch = getChar();
     while(true) {
-        ch = consumeChar();
-        if(isdigit(ch))
+        int ch = getChar();
+        if(isdigit(ch)) {
             tok_buf[bidx++] = ch;
+            consumeChar();
+        }
+        else if(ch == '.') {
+            tok_buf[bidx++] = ch;
+            consumeChar();
+            get_num_1();
+            break;
+        }
         else
             break;
     }
 
+    unary = false;
+    Token* tok = createToken(TOK_NUM);
     tok->data.num = strtod(tok_buf, NULL);
     tok->str = _dup_str(tok_buf);
     return tok;
@@ -89,7 +138,62 @@ static Token* get_number() {
 // [+-*/%()^=]
 static Token* get_oper() {
 
-    return NULL;
+    int ch = getChar();
+    switch(ch) {
+        case '+':
+            consumeChar();
+            if(unary)
+                return createToken(TOK_UPLUS);
+            else {
+                unary = true;
+                return createToken(TOK_ADD);
+            }
+        case '-':
+            consumeChar();
+            if(unary)
+                return createToken(TOK_UMINUS);
+            else {
+                unary = true;
+                return createToken(TOK_SUB);
+            }
+        case '*':
+            consumeChar();
+            unary = true;
+            return createToken(TOK_MUL);
+        case '/':
+            consumeChar();
+            unary = true;
+            return createToken(TOK_DIV);
+        case '%':
+            consumeChar();
+            unary = true;
+            return createToken(TOK_MOD);
+        case '^':
+            consumeChar();
+            unary = true;
+            return createToken(TOK_POW);
+        case '(':
+            consumeChar();
+            unary = true;
+            return createToken(TOK_OPAREN);
+        case ')':
+            consumeChar();
+            unary = false;
+            return createToken(TOK_CPAREN);
+        case '<':
+            consumeChar();
+            unary = false;
+            return createToken(TOK_EXPR);
+        case '=':
+            consumeChar();
+            unary = false;
+            return createToken(TOK_EQU);
+        default:
+            consumeChar();
+            syntaxError("unknown operator: %c", ch);
+            return createToken(TOK_ERROR);
+            break;
+    }
 }
 
 Token* consumeToken() {
@@ -152,7 +256,30 @@ Token* expectToken(TokenType t) {
 
 void printToken(Token* tok) {
 
-    printf("TOKEN: %s: %s\n", tokTypeToStr(tok->type), tok->str);
+    printf("TOKEN: %s", tokTypeToStr(tok->type));
+    switch(tok->type) {
+        case TOK_NUM:
+            printf(": \"%s\": %f\n", tok->str, tok->data.num);
+            break;
+        case TOK_SYM:
+            printf(": \"%s\": %s\n", tok->str, tok->data.str);
+            break;
+        case TOK_ADD:
+        case TOK_SUB:
+        case TOK_MUL:
+        case TOK_DIV:
+        case TOK_MOD:
+        case TOK_POW:
+        case TOK_EQU:
+        case TOK_EXPR:
+        case TOK_UMINUS:
+        case TOK_UPLUS:
+        case TOK_OPAREN:
+        case TOK_CPAREN:
+        default:
+            printf("\n");
+            break;
+    }
 }
 
 const char* tokTypeToStr(TokenType t) {
@@ -195,6 +322,10 @@ const char* tokTypeToStr(TokenType t) {
         (t == TOK_SYMS)? "SYMS" :
         (t == TOK_PRINT)? "PRINT" :
         (t == TOK_VERBO)? "VERBOSITY" :
+        (t == TOK_LOAD)? "LOAD" :
+        (t == TOK_SAVE)? "SAVE" :
+        (t == TOK_SOLVE)? "SOLVE" :
+        (t == TOK_EXPR)? "EXPR" :
         (t == TOK_ERROR)? "ERROR" : "UNKNOWN");
 }
 
