@@ -64,7 +64,7 @@ int getChar() {
 
     if(line_buf[0] == END_OF_FILE)
         return END_OF_FILE;
-    else if(line_buf[bidx] == 0 || line_buf[bidx] == '\n')
+    else if(line_buf[0] == END_OF_LINE)
         return END_OF_LINE;
     else
         return line_buf[bidx];
@@ -72,15 +72,15 @@ int getChar() {
 
 int consumeChar() {
 
-    while(true) {
-        if(isspace(line_buf[bidx])) {
-            bidx++;
-            continue;
-        }
-        else if(line_buf[0] == END_OF_FILE)
+    if(line_buf[0] == END_OF_LINE) {
+        get_line();
+        return line_buf[bidx];
+    }
+    else {
+        if(line_buf[0] == END_OF_FILE)
             return END_OF_FILE;
         else if(line_buf[bidx] == 0 || line_buf[bidx] == '\n') {
-            get_line();
+            line_buf[0] = END_OF_LINE;
             return END_OF_LINE;
         }
         else {

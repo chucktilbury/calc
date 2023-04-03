@@ -9,10 +9,14 @@
 int main(int argc, char** argv) {
 
     openFile(argv[1]);
-    Token* tok = consumeToken(); // prime the pump
+    Token* tok;
 
-    while(!TOKEN_IS_EOL) {
-        printToken(crntToken());
+    consumeToken();
+    while(!TOKEN_IS_EOF) {
+        while(!TOKEN_IS_EOL) {
+            printToken(crntToken());
+            consumeToken();
+        }
         consumeToken();
     }
 

@@ -56,7 +56,7 @@ typedef enum {
 
 typedef struct _token_ {
     TokenType type;
-    const  char* str;
+    const char* str;
     union {
         const char* str;
         double num;
@@ -122,6 +122,7 @@ double getTokenNum();
                     (TOKEN_TYPE == TOK_PRINT)? true: false)
 
 #define TOKEN_IS_EOL ((TOKEN_TYPE == TOK_EOL)? true: false)
+#define TOKEN_IS_EOF ((TOKEN_TYPE == TOK_EOF)? true: false)
 
 #define TOKEN_TYPE (crntToken()->type)
 #define TOKEN_STR (crntToken()->str)

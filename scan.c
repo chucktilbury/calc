@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -18,10 +19,16 @@ static Token* get_string() {
     Token* tok = createToken(TOK_SYM);
 
     int ch = getChar();
-    while(isalpha(ch) || ch == '_' || isdigit(ch))
-        tok_buf[bidx++] = consumeChar();
+    while(true) {
+        ch = consumeChar();
+        if((isalpha(ch) || ch == '_' || isdigit(ch)))
+            tok_buf[bidx++] = ch;
+        else
+            break;
+    }
 
-    tok->data.num = strtod(tok_buf, NULL);
+    tok->data.str = _dup_str(tok_buf);
+    tok->str = _dup_str(tok_buf);
     return tok;
 }
 
@@ -30,10 +37,17 @@ static Token* get_number() {
 
     Token* tok = createToken(TOK_NUM);
 
-    while(isdigit(getChar()))
-        tok_buf[bidx++] = consumeChar();
+    int ch = getChar();
+    while(true) {
+        ch = consumeChar();
+        if(isdigit(ch))
+            tok_buf[bidx++] = ch;
+        else
+            break;
+    }
 
     tok->data.num = strtod(tok_buf, NULL);
+    tok->str = _dup_str(tok_buf);
     return tok;
 }
 
@@ -45,17 +59,27 @@ static Token* get_oper() {
 
 Token* consumeToken() {
 
+    Token* tok;
+
     memset(tok_buf, 0, sizeof(tok_buf));
     bidx = 0;
 
-    int ch = getChar();
-    if(isalpha(ch) || ch == '_')
-        _crnt_ = get_string();
-    else if(isdigit(ch))
-        _crnt_ = get_number();
-    else
-        _crnt_ = get_oper();
+    while(isspace(getChar()))
+        consumeChar();
 
+    int ch = getChar();
+    if(ch == END_OF_LINE || ch == 0) {
+        consumeChar(); // consume the EOL
+        tok = createToken(TOK_EOL);
+    }
+    else if(isalpha(ch) || ch == '_')
+        tok = get_string();
+    else if(isdigit(ch))
+        tok = get_number();
+    else
+        tok = get_oper();
+
+    _crnt_ = tok;
     return _crnt_;
 }
 

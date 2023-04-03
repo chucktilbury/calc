@@ -49,12 +49,12 @@ char* _mem_dup_str(const char* str) {
     char* ptr;
 
     if(str == NULL)
-        len = 1;
+        len = 0;
     else
         len = strlen(str);
 
-    ptr = malloc(len);
-    memset(ptr, 0, len);
+    ptr = malloc(len+1);
+    memset(ptr, 0, len+1);
 
     if(str != NULL)
         memcpy(ptr, str, len);
