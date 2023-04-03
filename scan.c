@@ -13,10 +13,43 @@ static char tok_buf[1024];
 static int bidx = 0;
 static Token* _crnt_;
 
+static struct _keywords_ {
+    const char* name;
+    TokenType type;
+} keyword_list [] = {
+#include "keyword_list.h"
+    {NULL, -1}
+};
+static const int num_keywords = (sizeof(keyword_list)/sizeof(struct _keywords_))-1;
+
+static int find_keyword(const char* word) {
+
+    int low = 0, high = num_keywords;
+    int mid = (low + high) / 2;
+    char buf[64];
+
+    // make it case-insensitive
+    memset(buf, 0, sizeof(buf));
+    for(int i = 0; word[i] != 0; i++)
+        buf[i] = toupper(word[i]);
+
+    // iterative binary search
+    while(low <= high) {
+        if (strcmp(keyword_list[mid].name, buf) == 0)
+            return keyword_list[mid].type;
+        else if (strcmp(keyword_list[mid].name, buf) < 0)
+            low = mid + 1;
+        else
+            high = mid - 1;
+
+        mid = (low + high) / 2;
+    }
+
+    return TOK_SYM;
+}
+
 // [a-zA-Z_][a-zA-Z_0-9]*
 static Token* get_string() {
-
-    Token* tok = createToken(TOK_SYM);
 
     int ch = getChar();
     while(true) {
@@ -27,6 +60,8 @@ static Token* get_string() {
             break;
     }
 
+    int type = find_keyword(tok_buf);
+    Token* tok = createToken(type);
     tok->data.str = _dup_str(tok_buf);
     tok->str = _dup_str(tok_buf);
     return tok;
@@ -159,6 +194,7 @@ const char* tokTypeToStr(TokenType t) {
         (t == TOK_QUIT)? "QUIT" :
         (t == TOK_SYMS)? "SYMS" :
         (t == TOK_PRINT)? "PRINT" :
+        (t == TOK_VERBO)? "VERBOSITY" :
         (t == TOK_ERROR)? "ERROR" : "UNKNOWN");
 }
 

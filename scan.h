@@ -50,6 +50,9 @@ typedef enum {
     TOK_QUIT,
     TOK_SYMS,
     TOK_PRINT,
+    TOK_VERBO,
+    TOK_LOAD,
+    TOK_SAVE,
 
     TOK_ERROR,
 } TokenType;

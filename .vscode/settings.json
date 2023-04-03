@@ -3,9 +3,15 @@
         "bidx",
         "CPAREN",
         "HPOT",
+        "infile",
         "OPAREN",
         "plst",
         "retv",
-        "UMINUS"
-    ]
+        "strcmp",
+        "UMINUS",
+        "VERBO"
+    ],
+    "files.associations": {
+        "array": "c"
+    }
 }

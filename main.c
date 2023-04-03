@@ -1,12 +1,15 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "scan.h"
 #include "errors.h"
 #include "fileio.h"
 
 int main(int argc, char** argv) {
+
+    printf("result: %d\n", strcmp("atanh", "atan"));
 
     openFile(argv[1]);
     Token* tok;

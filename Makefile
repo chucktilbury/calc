@@ -17,12 +17,15 @@ LIBS	=	-lm -lreadline
 $(TARGET): $(OBJS) calc.c
 	gcc $(DEBUG) -o $(TARGET) main.c $(OBJS) $(LIBS)
 
+keyword_list.h: keyword_list.txt
+	./sort.py
+
 ptrlst.o: ptrlst.c ptrlst.h
 memory.o: memory.c memory.h
 strings.o: strings.c strings.h
 value.o: value.c value.h
-scan.o: scan.c scan.h
+scan.o: scan.c scan.h keyword_list.h
 errors.o: errors.c errors.h
 
 clean:
-	-rm -f $(OBJS) $(TARGET)
+	-rm -f $(OBJS) $(TARGET) keyword_list.h
