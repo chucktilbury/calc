@@ -9,11 +9,28 @@
 infile = "keyword_list.txt"
 outfile = "keyword_list.h"
 
+header = '''
+static struct _keywords_ {
+    const char* name;
+    TokenType type;
+} keyword_list [] = {
+'''
+
+footer = '''
+    {NULL, -1}
+};
+static const int num_keywords =
+                    (sizeof(keyword_list)/sizeof(struct _keywords_))-1;
+
+'''
+
 lst = []
 with open(infile, "r") as ifp:
     lst = ifp.readlines()
 
 lst.sort()
 with open(outfile, "w") as ofp:
+    ofp.write(header)
     for item in lst:
-        ofp.write(item)
+        ofp.write("    "+item)
+    ofp.write(footer)

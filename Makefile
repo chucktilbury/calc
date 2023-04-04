@@ -1,12 +1,15 @@
 
 TARGET	=	calc
-OBJS	=	ptrlst.o \
+OBJS	=	scan.o \
+			ptrlst.o \
 			memory.o \
 			strings.o \
 			value.o \
-			scan.o \
 			errors.o \
-			fileio.o
+			fileio.o \
+			cmds.o \
+			calc.o \
+			parse.o
 CARGS	=	-Wall -Wextra
 DEBUG	=	-g3
 LIBS	=	-lm -lreadline
@@ -26,6 +29,7 @@ strings.o: strings.c strings.h
 value.o: value.c value.h
 scan.o: scan.c scan.h keyword_list.h
 errors.o: errors.c errors.h
+parse.o: parse.c parse.h
 
 clean:
 	-rm -f $(OBJS) $(TARGET) keyword_list.h

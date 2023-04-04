@@ -1,78 +1,57 @@
 
 #include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "parse.h"
 #include "value.h"
+#include "scan.h"
+#include "cmds.h"
+#include "calc.h"
 
-struct _translate_ {
-    int val;
-    const char* str;
-} trans_table[] = {
-    {VAL_ADD, "+"},
-    {VAL_SUB, "-"},
-    {VAL_MUL, "*"},
-    {VAL_DIV, "/"},
-    {VAL_MOD, "%"},
-    {VAL_POW, "^"},
-    {VAL_UMINUS, "-"},
-    {VAL_UPLUS, "+"},
-    {VAL_COS, "cos"},
-    {VAL_SIN, "sin"},
-    {VAL_TAN, "tan"},
-    {VAL_ACOS, "acos"},
-    {VAL_ASIN, "asin"},
-    {VAL_ATAN, "atan"},
-    {VAL_COSH, "cosh"},
-    {VAL_SINH, "sinh"},
-    {VAL_TANH, "tanh"},
-    {VAL_ACOSH, "acosh"},
-    {VAL_ASINH, "asinh"},
-    {VAL_ATANH, "atanh"},
-    {VAL_LOG, "log"},
-    {VAL_SQRT, "sqrt"},
-    {VAL_CBRT, "cbrt"},
-    {VAL_CEIL, "ceil"},
-    {VAL_FLOOR, "floor"},
-    {VAL_ABS, "abs"},
-    {VAL_OPAREN, "("},
-    {VAL_CPAREN, ")"},
-    {-1, NULL}
-};
+bool parse() {
 
-static char static_buffer[1024];
-static int bidx = 0;
+    Token* tok;
+    bool finished = false;
+    bool result = false; // continue by default
 
-static const char* charToTok(int ch) {
+    while(!finished) {
+        tok = crntToken();
+        switch(tok->type) {
+            // parse the commands
+            case TOK_HELP: finished = do_HELP(); break;
+            case TOK_QUIT: result = finished = do_QUIT(); break;
+            case TOK_SYMS: finished = do_SYMS(); break;
+            case TOK_PRINT: finished = do_PRINT(); break;
+            case TOK_VERBO: finished = do_VERBOSITY(); break;
+            case TOK_LOAD: finished = do_LOAD(); break;
+            case TOK_SAVE: finished = do_SAVE(); break;
+            case TOK_SOLVE: finished = do_SOLVE(); break;
 
-    bidx = 0;
-    memset(static_buffer, 0, sizeof(static_buffer))
+            case TOK_EOL:
+            case TOK_EOF:
+                finished = true;
+                consumeToken();
+                break;
 
-}
-
-
-static Value get_token(String s) {
-
-
-}
-
-/**
- * @brief Input a string as an expression and convert it to a queue of values.
- *
- * @param str
- * @return Queue
- */
-Queue parse(String str) {
-
-    Queue que = createQueue();
-
-    resetString(str);
-    for(int ch = iterateString(str); ch != 0; ch = iterateString(str)) {
-        if(isdigit(ch)) {
-
+            default:
+                finished = consumeExpr();
+                break;
         }
     }
 
-    return que;
+    return result;
 }
+
+
+/*
+    consumeToken();
+    while(!TOKEN_IS_EOF && crntToken()->type != TOK_QUIT) {
+        while(!TOKEN_IS_EOL) {
+            printToken(crntToken());
+            consumeToken();
+        }
+        consumeToken();
+    }
+*/

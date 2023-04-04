@@ -14,14 +14,7 @@ static int bidx = 0;
 static Token* _crnt_;
 static bool unary = true;
 
-static struct _keywords_ {
-    const char* name;
-    TokenType type;
-} keyword_list [] = {
 #include "keyword_list.h"
-    {NULL, -1}
-};
-static const int num_keywords = (sizeof(keyword_list)/sizeof(struct _keywords_))-1;
 
 // Simple binary search.
 static int find_keyword(const char* word) {
@@ -240,6 +233,9 @@ void destroyToken(Token* tok) {
 
 Token* crntToken() {
 
+    if(_crnt_ == NULL)
+        consumeToken(); // only happens on first time.
+
     return _crnt_;
 }
 
@@ -363,3 +359,4 @@ double getTokenNum() {
 
     return _crnt_->data.num;
 }
+

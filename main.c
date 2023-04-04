@@ -3,23 +3,23 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "scan.h"
+#include "parse.h"
 #include "errors.h"
 #include "fileio.h"
 
 int main(int argc, char** argv) {
 
-    openFile(argv[1]);
-    Token* tok;
+    bool finished = false;
 
-    consumeToken();
-    while(!TOKEN_IS_EOF && crntToken()->type != TOK_QUIT) {
-        while(!TOKEN_IS_EOL) {
-            printToken(crntToken());
-            consumeToken();
-        }
-        consumeToken();
-    }
+    if(argc < 2)
+        openFile(NULL);
+    else
+        openFile(argv[1]);
+
+    consumeChar(); // prime the pipeline
+    while(!finished)
+        // parse individual lines until finished
+        finished = parse();
 
     return getNumErrors();
 }

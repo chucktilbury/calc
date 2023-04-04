@@ -56,8 +56,7 @@ void openFile(const char* name) {
         else
             fname = _dup_str(name);
     }
-
-    get_line();
+    line_buf[0] = END_OF_LINE;
 }
 
 int getChar() {
