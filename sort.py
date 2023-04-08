@@ -10,6 +10,10 @@ infile = "keyword_list.txt"
 outfile = "keyword_list.h"
 
 header = '''
+#ifndef _KEYWORD_LIST_H
+#define _KEYWORD_LIST_H
+// Auto generated file. Do not modify.
+
 static struct _keywords_ {
     const char* name;
     TokenType type;
@@ -21,6 +25,8 @@ footer = '''
 };
 static const int num_keywords =
                     (sizeof(keyword_list)/sizeof(struct _keywords_))-1;
+
+#endif /* _KEYWORD_LIST_H */
 
 '''
 

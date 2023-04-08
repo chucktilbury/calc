@@ -1,14 +1,14 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include <string.h>
-#include <ctype.h>
 
 #include "parse.h"
-#include "value.h"
 #include "scan.h"
 #include "cmds.h"
 #include "calc.h"
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough="
 
 bool parse() {
 
@@ -29,8 +29,10 @@ bool parse() {
             case TOK_SAVE: finished = do_SAVE(); break;
             case TOK_SOLVE: finished = do_SOLVE(); break;
 
-            case TOK_EOL:
             case TOK_EOF:
+                result = true;
+                // fall through
+            case TOK_EOL:
                 finished = true;
                 consumeToken();
                 break;
@@ -40,18 +42,7 @@ bool parse() {
                 break;
         }
     }
-
     return result;
 }
 
-
-/*
-    consumeToken();
-    while(!TOKEN_IS_EOF && crntToken()->type != TOK_QUIT) {
-        while(!TOKEN_IS_EOL) {
-            printToken(crntToken());
-            consumeToken();
-        }
-        consumeToken();
-    }
-*/
+#pragma GCC diagnostic pop
