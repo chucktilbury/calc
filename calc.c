@@ -32,20 +32,22 @@ static int precedence(TokenType type) {
     fatalError("invalid operator while finding precedence %c (0x%02X)", type, type);
 }
 
-static bool is_unary(TokenType type) {
+static bool is_right_assoc(TokenType type) {
 
-    if(type == TOK_UMINUS || type == TOK_UPLUS)
+    if(type == TOK_UMINUS || type == TOK_UPLUS || type == TOK_EQU)
         return true;
 
     return false;
 }
 
+/*
+ * SYM = expression -- save the expression result in the SYM
+ * SYM < expression -- save the expression in the SYM
+ * expression -- print the result of the expression
+ * SYM -- print the value of the SYM (expr or value)
+ */
 bool consumeExpr() {
-
-    while(crntToken()->type != TOK_EOL) {
-        printToken(crntToken());
-        consumeToken();
-    }
-
-    return true; // return after evaluating the line
+is_right_assoc(0);
+precedence(0);
+    return false;
 }

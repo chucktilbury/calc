@@ -9,6 +9,8 @@ OBJS	=	scan.o \
 			fileio.o \
 			cmds.o \
 			calc.o \
+			hash.o \
+			symbols.o \
 			parse.o
 CARGS	=	-Wall -Wextra
 DEBUG	=	-g3

@@ -22,6 +22,9 @@ static int col_no = 1;
 
 static void get_line() {
 
+    char prompt[10];
+    snprintf(prompt, sizeof(prompt), "(%d) >> ", line_no);
+
     memset(line_buf, 0, sizeof(line_buf));
     bidx = 0;
     line_no++;
@@ -34,15 +37,17 @@ static void get_line() {
     }
     else {
         while(true) {
-            char* ptr = readline(">> ");
+            char* ptr = readline(prompt);
             if(ptr && *ptr) {
                 strncpy(line_buf, ptr, sizeof(line_buf));
                 add_history(ptr);
                 free(ptr);
                 break;
             }
-            else
+            else {
+                snprintf(prompt, sizeof(prompt), "(%d) >> ", line_no);
                 line_no++;
+            }
         }
     }
 }

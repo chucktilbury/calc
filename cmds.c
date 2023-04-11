@@ -3,6 +3,7 @@
 
 #include "cmds.h"
 #include "scan.h"
+#include "symbols.h"
 
 bool do_HELP() {
 
@@ -23,6 +24,7 @@ bool do_SYMS() {
 
     printf("symbols\n");
     consumeToken();
+    dumpSymbolTable();
     return false;
 }
 

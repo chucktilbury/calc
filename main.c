@@ -6,10 +6,18 @@
 #include "parse.h"
 #include "errors.h"
 #include "fileio.h"
+#include "hash.h"
+#include "memory.h"
+#include "symbols.h"
+
+extern Hash* symbol_table; // defined in symbols.c
 
 int main(int argc, char** argv) {
 
     bool finished = false;
+
+    _init_memory();
+    createSymbolTable();
 
     if(argc < 2)
         openFile(NULL);
@@ -20,6 +28,9 @@ int main(int argc, char** argv) {
     while(!finished)
         // parse individual lines until finished
         finished = parse();
+
+    destroySymbolTable();
+    _destroy_memory();
 
     return getNumErrors();
 }

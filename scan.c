@@ -175,11 +175,11 @@ static Token* get_oper() {
             return createToken(TOK_CPAREN);
         case '<':
             consumeChar();
-            unary = false;
+            unary = true;
             return createToken(TOK_EXPR);
         case '=':
             consumeChar();
-            unary = false;
+            unary = true;
             return createToken(TOK_EQU);
         default:
             consumeChar();
@@ -255,10 +255,10 @@ void printToken(Token* tok) {
     printf("TOKEN: %s", tokTypeToStr(tok->type));
     switch(tok->type) {
         case TOK_NUM:
-            printf(": \"%s\": %f\n", tok->str, tok->data.num);
+            printf(": \"%s\": %f", tok->str, tok->data.num);
             break;
         case TOK_SYM:
-            printf(": \"%s\": %s\n", tok->str, tok->data.str);
+            printf(": \"%s\": %s", tok->str, tok->data.str);
             break;
         case TOK_ADD:
         case TOK_SUB:
@@ -273,7 +273,8 @@ void printToken(Token* tok) {
         case TOK_OPAREN:
         case TOK_CPAREN:
         default:
-            printf("\n");
+            // do nothing
+            //printf("");
             break;
     }
 }
