@@ -5,9 +5,9 @@
 #include "errors.h"
 #include "ptrlst.h"
 
-typedef List ValueList;
+typedef List ValueLst;
 
-#define createValueLst()        (ValueList)createList()
+#define createValueLst()        (ValueLst)createList()
 #define addValueLst(lst, v)     addList((List)(lst), (void*)(v))
 #define getValueLst(lst, i)     (Value*)getList((List)(lst), (i))
 #define resetValueLst(lst)      resetList((List)lst)
@@ -16,8 +16,8 @@ typedef List ValueList;
 typedef enum {
     VAL_OPERATOR,
     VAL_NUMBER,
-    VAL_EXPRESSION,
     VAL_VARIABLE,
+    VAL_EXPRESSION,
 } ValueType;
 
 typedef struct {

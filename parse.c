@@ -10,7 +10,11 @@
 #include "memory.h"
 #include "symbols.h"
 
-void* consume_expression() {
+/*
+ * Turn the expression list from the scanner into the value list that the
+ * expression evaluator can handle.
+ */
+static void* consume_expression() {
 
     bool finished = false;
 
@@ -30,10 +34,22 @@ void* consume_expression() {
     return NULL;
 }
 
-double solve_expression(void* expr) {
+#if 0
+static double solve_expression(void* expr) {
     (void)expr;
     return 0.0;
 }
+
+static void show_result(void* expr) {
+
+    printf("result: %f\n", solve_expression(expr));
+}
+#else
+static void show_result() {
+
+    printf("result: 0.0 (stub)\n");
+}
+#endif
 
 /*
  * When this is called, a symbol is the first thing encountered. The next
@@ -49,6 +65,37 @@ double solve_expression(void* expr) {
  */
 static void parse_symbol() {
 
+    Value* val;
+    Token* tok = crntToken();
+    ValueLst lst = createValueLst();
+
+    val = createValue(VAL_VARIABLE, tok);
+    addSymValue(tok->str, val);
+    addValueLst(lst, val);
+    consumeToken(); // consume the TOK_SYM
+
+    switch(crntToken()->type) {
+        case TOK_EQU:
+        case TOK_EXPR:
+            // assign the value of the expression to the variable
+            val = createValue(VAL_OPERATOR, crntToken());
+            addValueLst(lst, val);
+            val = createValue(VAL_EXPRESSION, NULL);
+            val->data.expr = consume_expression();
+            addValueLst(lst, val);
+            break;
+        case TOK_EOL:
+            // simply print the result of the value specified
+            show_result();
+            break;
+        default:
+            // everything else is syntax error
+            syntaxError("expected a '=', '<', or EOL, but got %s",
+                            tokTypeToStr(crntToken()->type));
+            break;
+    }
+
+#if 0
     Value* val = createValue(VAL_VARIABLE, crntToken());
     addSymValue(crntToken()->str, val);
     consumeToken();
@@ -79,6 +126,7 @@ static void parse_symbol() {
     else {
         // else a syntax error
     }
+#endif
 }
 
 /*
@@ -92,21 +140,14 @@ static bool consume_line() {
     while(!finished) {
         switch(crntToken()->type) {
             case TOK_EOL:
-                printToken(crntToken());
-                fputc('\n', stdout);
                 finished = true;
                 consumeToken();
                 break;
             case TOK_SYM:
-                printToken(crntToken());
-                fputc('\n', stdout);
                 parse_symbol();
-                //consumeToken();
                 break;
             default:
-                // The first thing in the line is taken to be an expression
-                // and the result is printed as a number.
-                consume_expression();
+                show_result(consume_expression());
                 break;
         }
     }

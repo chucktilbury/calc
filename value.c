@@ -25,13 +25,11 @@ void showValue(Value* val) {
     switch(val->type) {
         case VAL_OPERATOR:
         case VAL_NUMBER:
+        case VAL_VARIABLE:
             printToken(val->tok);
             break;
         case VAL_EXPRESSION:
             printf("expression");
-            break;
-        case VAL_VARIABLE:
-            printToken(val->tok);
             break;
         default:
             fatalError("unknown value type is showValue(): %d", val->type);
